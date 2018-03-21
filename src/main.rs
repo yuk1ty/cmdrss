@@ -24,15 +24,9 @@ fn main() {
     let ty = value_t!(arg_matches, "feeds", Rss).unwrap_or_else(|e| e.exit());
 
     match ty {
-        Rss::HackerNews(url) => create_list(&url)
-            .iter()
-            .for_each(|item| println!("{}", serde_json::to_string(&item).unwrap())),
-        Rss::Reddit(url) => create_list(&url)
-            .iter()
-            .for_each(|item| println!("{}", serde_json::to_string(&item).unwrap())),
-        Rss::HatenaBookMark(url) => create_list(&url)
-            .iter()
-            .for_each(|item| println!("{}", serde_json::to_string(&item).unwrap())),
+        Rss::HackerNews(url) => print_list_items(create_list(&url)),
+        Rss::Reddit(url) => print_list_items(create_list(&url)),
+        Rss::HatenaBookMark(url) => print_list_items(create_list(&url)),
     };
 }
 
@@ -59,10 +53,16 @@ impl FromStr for Rss {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 struct FeedItem {
     title: String,
     link: String,
+}
+
+fn print_list_items(items: Vec<FeedItem>) {
+    items
+        .iter()
+        .for_each(|item| println!("{}", serde_json::to_string(&item).unwrap()))
 }
 
 fn create_list(url: &str) -> Vec<FeedItem> {
