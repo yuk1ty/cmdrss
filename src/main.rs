@@ -1,8 +1,10 @@
 #[macro_use]
 extern crate clap;
+extern crate rss;
 
 use clap::{App, Arg};
 use std::str::FromStr;
+use rss::Channel;
 
 enum Rss {
     HackerNews(String),
@@ -15,9 +17,13 @@ impl FromStr for Rss {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "hacker" => Ok(Rss::HackerNews("hackernews".to_string())),
-            "reddit" => Ok(Rss::Reddit("reddit".to_string())),
-            "hatena" => Ok(Rss::HatenaBookMark("hatena bookmark".to_string())),
+            "hacker" => Ok(Rss::HackerNews("https://hnrss.org/newest".to_string())),
+            "reddit" => Ok(Rss::Reddit(
+                "https://www.reddit.com/r/programming/.rss".to_string(),
+            )),
+            "hatena" => Ok(Rss::HatenaBookMark(
+                "http://b.hatena.ne.jp/hotentry/it.rss".to_string(),
+            )),
             _ => Err("Sorry, not matched in this app."),
         }
     }
@@ -37,8 +43,17 @@ fn main() {
     let ty = value_t!(arg_matches, "feeds", Rss).unwrap_or_else(|e| e.exit());
 
     match ty {
-        Rss::HackerNews(url) => println!("{}", url),
-        Rss::Reddit(url) => println!("{}", url),
-        Rss::HatenaBookMark(url) => println!("{}", url),
+        Rss::HackerNews(url) => {
+            let channel = Channel::from_url(&url).unwrap();
+            println!("{}", channel.to_string());
+        }
+        Rss::Reddit(url) => {
+            let channel = Channel::from_url(&url).unwrap();
+            println!("{}", channel.to_string());
+        }
+        Rss::HatenaBookMark(url) => {
+            let channel = Channel::from_url(&url).unwrap();
+            println!("{}", channel.to_string());
+        }
     }
 }
