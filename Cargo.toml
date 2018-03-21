@@ -6,3 +6,6 @@ authors = ["Yuki <yuki.mul.tiplus@gmail.com>"]
 [dependencies]
 rss = { version = "1.0", features = ["from_url"] }
 clap = "2.31.2"
+serde = "1.0.33"
+serde_json = "1.0.12"
+serde_derive = "1.0.33"
